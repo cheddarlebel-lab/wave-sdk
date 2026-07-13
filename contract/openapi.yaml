@@ -4,9 +4,7 @@ info:
   version: 1.0.0
   description: Partner-facing gateway for Wave Passport BLE door unlock.
 servers:
-  - url: https://{project}.supabase.co/functions/v1
-    variables:
-      project: { default: "PROJECT_REF" }
+  - url: https://app.wavepassport.com/api
 paths:
   /partner-auth/register:
     post:

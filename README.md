@@ -2,7 +2,7 @@
 
 Embed **Wave Passport BLE door unlock** into any app. MCP-first, contract-driven.
 
-**Developer portal:** https://wave-developers.vercel.app — quickstart, live demo, `llms.txt`, OpenAPI.
+**Developer portal:** https://app.wavepassport.com/developers — quickstart, live demo, `llms.txt`, OpenAPI.
 
 ## Layout
 

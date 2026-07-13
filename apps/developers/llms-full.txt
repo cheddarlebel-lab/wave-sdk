@@ -8,7 +8,7 @@ This file is the complete, flat reference for an AI builder or agent.
 The unlock is a 5-step pipeline hidden behind one SDK call:
 1. Scan for the reader — BLE name prefix "SKBluTag" OR service UUID
    496B2C43-B05E-4A9A-9592-535173B7AB51.
-2. Proximity gate — compare RSSI to the site threshold (default -40, tunable per site from the cloud).
+2. Proximity gate — compare RSSI to the site threshold (default -65, tunable per site from the cloud).
 3. Write the credential — characteristic 995B637F-13F2-4335-96F5-5541ECFCE219,
    write WITHOUT response, payload = one byte 0x01 followed by the member's userNumber as ASCII.
    IMPORTANT: treat the write as immediate success; do NOT wait for a BLE notify (it deadlocks the reader).
@@ -26,7 +26,7 @@ Session tokens are short-lived (300s) and scoped to the partner's allowed sites.
 
 ## Gateway HTTP API
 
-Base URL: https://<project-ref>.supabase.co/functions/v1
+Base URL: https://app.wavepassport.com/api
 Every request ALSO sends header:  apikey: <supabase anon key>
 
 POST /partner-auth/register            (header x-wave-admin-key: <admin key>)

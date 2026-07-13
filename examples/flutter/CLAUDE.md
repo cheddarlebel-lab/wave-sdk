@@ -6,7 +6,7 @@ Add `wave_unlock` to `pubspec.yaml` (from `packages/flutter`), then:
 import 'package:wave_unlock/wave_unlock.dart';
 
 final wave = WaveUnlock(const WaveConfig(
-  gatewayUrl: 'https://zuijamqvgxvajvhrdnlx.supabase.co/functions/v1',
+  gatewayUrl: 'https://app.wavepassport.com/api',
   anonKey: '<supabase anon key>',
   publishableKey: 'wave_pub_…',
   userNumber: '10001',

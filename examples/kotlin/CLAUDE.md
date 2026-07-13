@@ -8,7 +8,7 @@ import com.wave.unlock.*
 import com.wave.unlock.android.AndroidBleTransport
 
 val cfg = WaveConfig(
-    gatewayUrl = "https://zuijamqvgxvajvhrdnlx.supabase.co/functions/v1",
+    gatewayUrl = "https://app.wavepassport.com/api",
     anonKey = "<supabase anon key>",
     publishableKey = "wave_pub_…",
     userNumber = "10001",

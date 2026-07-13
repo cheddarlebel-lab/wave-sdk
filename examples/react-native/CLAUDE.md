@@ -9,7 +9,7 @@ cd ios && pod install   # links the Swift core
 import { WaveUnlock } from "@wave/unlock-react-native";
 
 const wave = new WaveUnlock({
-  gatewayUrl: "https://zuijamqvgxvajvhrdnlx.supabase.co/functions/v1",
+  gatewayUrl: "https://app.wavepassport.com/api",
   anonKey: "<supabase anon key>",
   publishableKey: "wave_pub_…",
   userNumber: "10001",
