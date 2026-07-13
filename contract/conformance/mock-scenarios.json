@@ -1,0 +1,7 @@
+[
+  { "scenario": "granted", "result": "granted", "reason": "Access Granted" },
+  { "scenario": "member_not_found", "result": "denied", "reason": "Member not found" },
+  { "scenario": "outside_hours", "result": "denied", "reason": "Outside access hours" },
+  { "scenario": "membership_expired", "result": "denied", "reason": "Membership expired" },
+  { "scenario": "outstanding_balance", "result": "denied", "reason": "Outstanding balance" }
+]

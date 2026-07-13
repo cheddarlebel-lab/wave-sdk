@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "ble": {
+    "serviceUuid": "496B2C43-B05E-4A9A-9592-535173B7AB51",
+    "writeCharacteristicUuid": "995B637F-13F2-4335-96F5-5541ECFCE219",
+    "readerNames": ["SKBluTag"],
+    "payloadPrefix": 1,
+    "writeWithoutResponse": true,
+    "disconnectDelayMs": 1500
+  },
+  "proximity": {
+    "defaultRssiThreshold": -40,
+    "cloudTimeoutMs": 5000
+  },
+  "sicmStatusCodes": { "idle": "1", "processing": "3", "timeout": "6" },
+  "denialMappingRef": "conformance/denial-mapping.json"
+}

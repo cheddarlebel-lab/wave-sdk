@@ -1,0 +1,115 @@
+openapi: 3.1.0
+info:
+  title: Wave Unlock Gateway
+  version: 1.0.0
+  description: Partner-facing gateway for Wave Passport BLE door unlock.
+servers:
+  - url: https://{project}.supabase.co/functions/v1
+    variables:
+      project: { default: "PROJECT_REF" }
+paths:
+  /partner-auth/register:
+    post:
+      summary: Provision a partner (admin only). Returns plaintext keys ONCE.
+      parameters:
+        - in: header
+          name: x-wave-admin-key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, allowed_sites]
+              properties:
+                name: { type: string }
+                allowed_sites: { type: array, items: { type: string } }
+      responses:
+        "200":
+          description: Partner created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  partner_id: { type: string }
+                  publishable_key: { type: string }
+                  secret_key: { type: string }
+                  test_key: { type: string }
+        "401": { description: Bad admin key }
+  /partner-auth/token:
+    post:
+      summary: Exchange a publishable or test key for a short-lived session token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [key]
+              properties:
+                key: { type: string, description: "wave_pub_* or wave_test_*" }
+      responses:
+        "200":
+          description: Session token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+                  mode: { type: string, enum: [live, test] }
+                  expires_in: { type: integer }
+        "401": { description: Invalid key }
+  /unlock-stream:
+    post:
+      summary: Read the caller's most recent unlock result (per-tenant scoped).
+      parameters:
+        - in: header
+          name: authorization
+          required: true
+          schema: { type: string, description: "Bearer <session token>" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [card_id]
+              properties:
+                card_id: { type: string }
+                binding_id: { type: string }
+      responses:
+        "200":
+          description: Result or pending
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [granted, denied, pending] }
+                  reason: { type: string, nullable: true }
+        "401": { description: Invalid/expired token }
+  /unlock-mock:
+    post:
+      summary: Emit a synthetic unlock event (test-mode token only).
+      parameters:
+        - in: header
+          name: authorization
+          required: true
+          schema: { type: string, description: "Bearer <test-mode session token>" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [card_id, scenario]
+              properties:
+                card_id: { type: string }
+                scenario: { type: string }
+      responses:
+        "200": { description: Event emitted }
+        "403": { description: Not a test-mode token }
