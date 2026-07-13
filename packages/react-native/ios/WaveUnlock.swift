@@ -20,15 +20,14 @@ class WaveUnlockModule: RCTEventEmitter {
     @objc(startUnlock:)
     func startUnlock(_ config: NSDictionary) {
         guard
-            let urlStr = config["gatewayUrl"] as? String, let url = URL(string: urlStr),
-            let anon = config["anonKey"] as? String,
             let pub = config["publishableKey"] as? String,
             let user = config["userNumber"] as? String
         else {
             emit(["kind": "failed", "error": "invalid config"])
             return
         }
-        Wave.configure(WaveConfig(gatewayURL: url, anonKey: anon, publishableKey: pub, userNumber: user))
+        let url = (config["gatewayUrl"] as? String).flatMap(URL.init) ?? WaveConfig.defaultGatewayURL
+        Wave.configure(WaveConfig(publishableKey: pub, userNumber: user, gatewayURL: url))
         task?.cancel()
         task = Task { [weak self] in
             for await state in Wave.unlock() {

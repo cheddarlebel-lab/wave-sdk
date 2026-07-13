@@ -24,12 +24,11 @@ public class WaveUnlockPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard call.method == "startUnlock", let a = call.arguments as? [String: Any],
-              let urlStr = a["gatewayUrl"] as? String, let url = URL(string: urlStr),
-              let anon = a["anonKey"] as? String, let pub = a["publishableKey"] as? String,
-              let user = a["userNumber"] as? String
+              let pub = a["publishableKey"] as? String, let user = a["userNumber"] as? String
         else { result(FlutterMethodNotImplemented); return }
 
-        Wave.configure(WaveConfig(gatewayURL: url, anonKey: anon, publishableKey: pub, userNumber: user))
+        let url = (a["gatewayUrl"] as? String).flatMap(URL.init) ?? WaveConfig.defaultGatewayURL
+        Wave.configure(WaveConfig(publishableKey: pub, userNumber: user, gatewayURL: url))
         task?.cancel()
         task = Task { [weak self] in
             for await state in Wave.unlock() { self?.sink?(Self.encode(state)) }

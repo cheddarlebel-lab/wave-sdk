@@ -79,7 +79,7 @@ export function scaffold(platform: string, style: string): ScaffoldResult {
       ],
       notes: [
         "Runnable today against the live gateway + Web Bluetooth (Chrome/Edge, foreground-only).",
-        "Replace WAVE_GATEWAY_URL / WAVE_ANON_KEY / publishableKey / userNumber.",
+        "Replace publishableKey / userNumber (the gateway URL defaults to production).",
         "Serve over https (Web Bluetooth requires a secure context).",
       ],
     };

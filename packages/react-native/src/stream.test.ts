@@ -3,7 +3,7 @@ import { WaveUnlock } from "./index.js";
 import { stateStream } from "./stream.js";
 import type { EmitterLike, UnlockState, WaveNativeModule } from "./types.js";
 
-const config = { gatewayUrl: "https://x/functions/v1", anonKey: "anon", publishableKey: "wave_pub_x", userNumber: "10001" };
+const config = { gatewayUrl: "https://x/functions/v1", publishableKey: "wave_pub_x", userNumber: "10001" };
 
 /// A fake native emitter we can push states through.
 function fakeEmitter() {

@@ -9,9 +9,9 @@ import { scaffold } from "./lib/scaffold.js";
 import { llmsText } from "./lib/docs.js";
 
 function gatewayConfig(): GatewayConfig {
-  const baseUrl = process.env.WAVE_GATEWAY_URL ?? "";
-  const anonKey = process.env.WAVE_ANON_KEY ?? "";
-  return { baseUrl, anonKey, adminKey: process.env.WAVE_ADMIN_KEY };
+  // Default to the branded, keyless gateway; override only for staging.
+  const baseUrl = process.env.WAVE_GATEWAY_URL ?? "https://app.wavepassport.com/api";
+  return { baseUrl, adminKey: process.env.WAVE_ADMIN_KEY };
 }
 
 function text(data: unknown) {
@@ -21,8 +21,8 @@ function text(data: unknown) {
 
 function requireGateway(cfg: GatewayConfig): string | null {
   if (!cfg.baseUrl) return "WAVE_GATEWAY_URL env is not set";
-  // WAVE_ANON_KEY is optional: the branded gateway (app.wavepassport.com/api)
-  // injects the key server-side. Only needed if pointing directly at Supabase.
+  // No Supabase key needed: the branded gateway (app.wavepassport.com/api) injects it
+  // server-side, so the SDK never handles a backend key.
   return null;
 }
 

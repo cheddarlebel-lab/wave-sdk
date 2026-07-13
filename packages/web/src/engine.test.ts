@@ -3,7 +3,7 @@ import { WaveUnlock } from "./index.js";
 import { friendly } from "./denials.js";
 import type { UnlockState, WebTransport } from "./types.js";
 
-const config = { gatewayUrl: "https://x/functions/v1", anonKey: "anon", publishableKey: "wave_pub_x", userNumber: "10001" };
+const config = { gatewayUrl: "https://x/functions/v1", publishableKey: "wave_pub_x", userNumber: "10001" };
 
 function mockTransport(overrides: Partial<WebTransport> = {}): WebTransport & { written?: Uint8Array } {
   const t: WebTransport & { written?: Uint8Array } = {

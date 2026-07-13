@@ -7,7 +7,7 @@ function stubFetch(status: number, body: unknown) {
   ) as unknown as typeof fetch;
 }
 
-const base: GatewayConfig = { baseUrl: "https://x.supabase.co/functions/v1", anonKey: "anon" };
+const base: GatewayConfig = { baseUrl: "https://x.supabase.co/functions/v1" };
 
 describe("gateway client", () => {
   it("register sends admin header + allowed_sites", async () => {
@@ -18,7 +18,8 @@ describe("gateway client", () => {
     const [url, init] = (f as unknown as ReturnType<typeof vi.fn>).mock.calls[0];
     expect(url).toBe("https://x.supabase.co/functions/v1/partner-auth/register");
     expect((init.headers as Record<string, string>)["x-wave-admin-key"]).toBe("admin");
-    expect((init.headers as Record<string, string>)["apikey"]).toBe("anon");
+    // Security: the SDK must never send a Supabase key — the branded gateway injects it.
+    expect((init.headers as Record<string, string>)["apikey"]).toBeUndefined();
     expect(JSON.parse(init.body as string)).toEqual({ name: "Co", allowed_sites: ["S1"] });
   });
 

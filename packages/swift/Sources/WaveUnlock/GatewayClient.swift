@@ -1,15 +1,20 @@
 import Foundation
 
-/// Configuration for talking to the Wave gateway (Supabase edge functions).
+/// Configuration for talking to the Wave gateway.
+///
+/// The SDK only ever talks to the branded gateway, which is tenant-scoped and injects
+/// its own backend key server-side. There is deliberately NO Supabase key here — a
+/// third-party app can only reach the scoped unlock endpoints, never the data plane.
 public struct WaveConfig: Sendable {
+    /// The production gateway. Override only for a documented staging environment.
+    public static let defaultGatewayURL = URL(string: "https://app.wavepassport.com/api")!
+
     public var gatewayURL: URL
-    public var anonKey: String
     public var publishableKey: String
     public var userNumber: String
 
-    public init(gatewayURL: URL, anonKey: String, publishableKey: String, userNumber: String) {
+    public init(publishableKey: String, userNumber: String, gatewayURL: URL = defaultGatewayURL) {
         self.gatewayURL = gatewayURL
-        self.anonKey = anonKey
         self.publishableKey = publishableKey
         self.userNumber = userNumber
     }
@@ -36,7 +41,6 @@ public struct GatewayClient: Sendable {
         var req = URLRequest(url: config.gatewayURL.appendingPathComponent(path))
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.setValue(config.anonKey, forHTTPHeaderField: "apikey")
         if let bearer { req.setValue("Bearer \(bearer)", forHTTPHeaderField: "Authorization") }
         req.httpBody = try JSONSerialization.data(withJSONObject: body)
         return req

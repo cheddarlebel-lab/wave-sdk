@@ -3,7 +3,7 @@ import Foundation
 /// The public entry point. Configure once, then stream `unlock()`.
 ///
 /// ```swift
-/// Wave.configure(WaveConfig(gatewayURL: url, anonKey: anon, publishableKey: "wave_pub_…", userNumber: "10001"))
+/// Wave.configure(WaveConfig(publishableKey: "wave_pub_…", userNumber: "10001"))
 /// for await state in Wave.unlock() {
 ///     // .scanning, .readerFound, .writing, .awaitingConfirmation, .granted, .denied, .timedOut, .failed
 /// }

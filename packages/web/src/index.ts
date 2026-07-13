@@ -12,7 +12,7 @@ export { friendly } from "./denials.js";
 /// The public facade. `unlock()` returns an async iterator of states.
 ///
 /// ```ts
-/// const wave = new WaveUnlock({ gatewayUrl, anonKey, publishableKey, userNumber });
+/// const wave = new WaveUnlock({ publishableKey, userNumber });
 /// for await (const state of wave.unlock()) render(state);
 /// ```
 export class WaveUnlock {

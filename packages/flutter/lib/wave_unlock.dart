@@ -41,7 +41,6 @@ class WaveUnlock {
     if (t != null) return runUnlock(t, _gateway, config);
     _methods.invokeMethod('startUnlock', {
       'gatewayUrl': config.gatewayUrl,
-      'anonKey': config.anonKey,
       'publishableKey': config.publishableKey,
       'userNumber': config.userNumber,
     });

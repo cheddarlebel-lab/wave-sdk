@@ -14,7 +14,7 @@ For a real app use the package instead of raw fetch:
 
 ```ts
 import { WaveUnlock } from "@wave/unlock-web";
-const wave = new WaveUnlock({ gatewayUrl, anonKey, publishableKey, userNumber });
+const wave = new WaveUnlock({ publishableKey, userNumber });
 for await (const state of wave.unlock()) render(state);
 ```
 

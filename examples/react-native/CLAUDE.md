@@ -8,12 +8,8 @@ cd ios && pod install   # links the Swift core
 ```tsx
 import { WaveUnlock } from "@wave/unlock-react-native";
 
-const wave = new WaveUnlock({
-  gatewayUrl: "https://app.wavepassport.com/api",
-  anonKey: "", // ignored when using the branded /api gateway
-  publishableKey: "wave_pub_…",
-  userNumber: "10001",
-});
+// Gateway URL defaults to the branded production gateway — no backend key needed.
+const wave = new WaveUnlock({ publishableKey: "wave_pub_…", userNumber: "10001" });
 
 async function unlock() {
   for await (const state of wave.unlock()) {

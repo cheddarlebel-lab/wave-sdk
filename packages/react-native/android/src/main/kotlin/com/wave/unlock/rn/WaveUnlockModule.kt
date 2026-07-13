@@ -32,10 +32,9 @@ class WaveUnlockModule(private val ctx: ReactApplicationContext) : ReactContextB
     @ReactMethod
     fun startUnlock(config: ReadableMap) {
         val cfg = WaveConfig(
-            gatewayUrl = config.getString("gatewayUrl") ?: "",
-            anonKey = config.getString("anonKey") ?: "",
             publishableKey = config.getString("publishableKey") ?: "",
             userNumber = config.getString("userNumber") ?: "",
+            gatewayUrl = config.getString("gatewayUrl") ?: "https://app.wavepassport.com/api",
         )
         val engine = UnlockEngine(AndroidBleTransport(ctx), gateway = HttpGateway(cfg))
         job?.cancel()

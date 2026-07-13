@@ -9,11 +9,14 @@ export type UnlockState =
   | { kind: "failed"; error: string };
 
 export type WaveWebConfig = {
-  gatewayUrl: string;
-  anonKey: string;
   publishableKey: string;
   userNumber: string;
+  /** Branded gateway; defaults to production. No Supabase key — the gateway injects it
+   *  server-side, so the SDK can only reach the scoped unlock endpoints. */
+  gatewayUrl?: string;
 };
+
+export const DEFAULT_GATEWAY_URL = "https://app.wavepassport.com/api";
 
 export type UnlockOptions = {
   cloudTimeoutMs?: number; // default 5000

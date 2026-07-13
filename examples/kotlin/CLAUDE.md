@@ -7,12 +7,8 @@ Depend on the core (`com.wave:wave-unlock`) and include `AndroidBleTransport` (f
 import com.wave.unlock.*
 import com.wave.unlock.android.AndroidBleTransport
 
-val cfg = WaveConfig(
-    gatewayUrl = "https://app.wavepassport.com/api",
-    anonKey = "", // ignored when using the branded /api gateway
-    publishableKey = "wave_pub_…",
-    userNumber = "10001",
-)
+// Gateway URL defaults to the branded production gateway — no backend key needed.
+val cfg = WaveConfig(publishableKey = "wave_pub_…", userNumber = "10001")
 
 val engine = UnlockEngine(AndroidBleTransport(context), gateway = HttpGateway(cfg))
 

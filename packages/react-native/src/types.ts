@@ -11,10 +11,10 @@ export type UnlockState =
   | { kind: "failed"; error: string };
 
 export type WaveRNConfig = {
-  gatewayUrl: string;
-  anonKey: string;
   publishableKey: string;
   userNumber: string;
+  /** Branded gateway; defaults to production on the native side. No Supabase key. */
+  gatewayUrl?: string;
 };
 
 export const TERMINAL_KINDS = ["granted", "denied", "timedOut", "failed"] as const;

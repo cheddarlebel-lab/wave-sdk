@@ -18,7 +18,6 @@ class HttpGateway(
         val builder = HttpRequest.newBuilder()
             .uri(URI.create("${config.gatewayUrl}/$path"))
             .header("Content-Type", "application/json")
-            .header("apikey", config.anonKey)
         if (bearer != null) builder.header("Authorization", "Bearer $bearer")
         return client.send(builder.POST(HttpRequest.BodyPublishers.ofString(body)).build(),
             HttpResponse.BodyHandlers.ofString())

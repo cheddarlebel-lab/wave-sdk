@@ -8,12 +8,8 @@ import WaveUnlock
 import WaveUnlockUI  // optional drop-in button
 
 // 1) Configure once (keys from wave_register_app or the Wave dashboard).
-Wave.configure(WaveConfig(
-    gatewayURL: URL(string: "https://app.wavepassport.com/api")!,
-    anonKey: "", // ignored when using the branded /api gateway
-    publishableKey: "wave_pub_…",
-    userNumber: "10001"
-))
+// Gateway URL defaults to the branded production gateway — no backend key needed.
+Wave.configure(WaveConfig(publishableKey: "wave_pub_…", userNumber: "10001"))
 
 // 2a) Stream the states yourself:
 for await state in Wave.unlock() {

@@ -43,10 +43,9 @@ class WaveUnlockPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, EventCh
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         if (call.method != "startUnlock") { result.notImplemented(); return }
         val cfg = WaveConfig(
-            gatewayUrl = call.argument("gatewayUrl") ?: "",
-            anonKey = call.argument("anonKey") ?: "",
             publishableKey = call.argument("publishableKey") ?: "",
             userNumber = call.argument("userNumber") ?: "",
+            gatewayUrl = call.argument("gatewayUrl") ?: "https://app.wavepassport.com/api",
         )
         val engine = UnlockEngine(AndroidBleTransport(context), gateway = HttpGateway(cfg))
         job?.cancel()

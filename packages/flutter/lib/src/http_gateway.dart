@@ -13,7 +13,6 @@ class HttpGateway implements Gateway {
   Future<Map<String, dynamic>> _post(String path, Map<String, dynamic> body, {String? bearer}) async {
     final req = await _client.postUrl(Uri.parse('${config.gatewayUrl}/$path'));
     req.headers.set('Content-Type', 'application/json');
-    req.headers.set('apikey', config.anonKey);
     if (bearer != null) req.headers.set('Authorization', 'Bearer $bearer');
     req.add(utf8.encode(jsonEncode(body)));
     final res = await req.close();

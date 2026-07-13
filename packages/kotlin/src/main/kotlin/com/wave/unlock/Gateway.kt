@@ -1,11 +1,13 @@
 package com.wave.unlock
 
-/** Config for the Wave gateway (Supabase edge functions). */
+/** Config for the Wave gateway. No Supabase key — the branded gateway is tenant-scoped
+ *  and injects its backend key server-side, so the SDK can only reach the scoped
+ *  unlock endpoints, never the data plane. */
 data class WaveConfig(
-    val gatewayUrl: String,
-    val anonKey: String,
     val publishableKey: String,
     val userNumber: String,
+    /** Production gateway. Override only for a documented staging environment. */
+    val gatewayUrl: String = "https://app.wavepassport.com/api",
 )
 
 data class Outcome(val status: Status, val reason: String?) {

@@ -3,10 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wave_unlock/wave_unlock.dart';
 
 const config = WaveConfig(
-  gatewayUrl: 'https://x/functions/v1',
-  anonKey: 'anon',
   publishableKey: 'wave_pub_x',
   userNumber: '10001',
+  gatewayUrl: 'https://x/functions/v1',
 );
 
 /// Fake gateway returning a scripted outcome.

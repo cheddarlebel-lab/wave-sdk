@@ -1,6 +1,5 @@
 export type GatewayConfig = {
-  baseUrl: string; // https://app.wavepassport.com/api (branded gateway)
-  anonKey: string; // Supabase anon key for routing
+  baseUrl: string; // https://app.wavepassport.com/api (branded gateway; injects its own key)
   adminKey?: string; // WAVE_ADMIN_KEY, only needed for register
   fetchImpl?: typeof fetch; // injectable for tests
 };
@@ -16,8 +15,8 @@ export type TokenResult = { token: string; mode: "live" | "test"; expires_in: nu
 
 export type UnlockStatus = { status: "granted" | "denied" | "pending"; reason: string | null };
 
-function baseHeaders(cfg: GatewayConfig): Record<string, string> {
-  return { "Content-Type": "application/json", apikey: cfg.anonKey };
+function baseHeaders(_cfg: GatewayConfig): Record<string, string> {
+  return { "Content-Type": "application/json" };
 }
 
 async function post<T>(
