@@ -132,9 +132,16 @@ Supporting schema (same Supabase project):
 
 - **`partners`** table — partner record, hashed API keys, allowed site set. RLS: service-
   write, no anon read.
-- **Multi-tenancy** — every partner-facing function scopes by partner + site set; the
-  existing anon-read policy on `unlock_events` is tightened so raw table access is no
-  longer the partner path (they go through `unlock-stream`).
+- **Multi-tenancy** — every partner-facing function scopes by partner + site set;
+  partners read only through `unlock-stream`, never the raw table. NOTE: the existing
+  `anon_read_unlock_events` policy is **kept** for backward-compat — the shipping
+  first-party Wave Passport app polls `unlock_events` directly through it. Tightening
+  that policy is a deliberate future migration, only after the first-party app also
+  moves onto the gateway. Do not drop it in this phase.
+- **Deploy home** — the gateway Edge Functions physically live in
+  `passeport/supabase/functions/` (co-deployed with `unlock-event`, sharing the DB and
+  `unlock_events`). The wave-sdk `gateway/` folder is a logical grouping in the spec;
+  the deployable code lands in the passeport project.
 - **Rate limiting** — per-key limits enforced in `partner-auth` / `unlock-stream`
   (token bucket in a small `rate_limits` table or Supabase's built-in limits).
 
