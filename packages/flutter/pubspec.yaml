@@ -13,3 +13,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.wave.unlock.flutter
+        pluginClass: WaveUnlockPlugin
+      ios:
+        pluginClass: WaveUnlockPlugin

@@ -1,5 +1,6 @@
 library wave_unlock;
 
+import 'package:flutter/services.dart';
 import 'src/engine.dart';
 import 'src/gateway.dart';
 import 'src/http_gateway.dart';
@@ -29,11 +30,44 @@ class WaveUnlock {
       : _transport = transport,
         _gateway = gateway ?? HttpGateway(config);
 
+  static const _methods = MethodChannel('wave_unlock/control');
+  static const _events = EventChannel('wave_unlock/states');
+
+  /// Streams unlock states. With an injected transport (tests/mocks) the Dart
+  /// engine drives it; otherwise the native plugin runs the core engine and
+  /// streams states over the platform EventChannel.
   Stream<UnlockState> unlock() {
     final t = _transport;
-    if (t == null) {
-      throw StateError('A BleTransport must be provided until the platform channel ships.');
+    if (t != null) return runUnlock(t, _gateway, config);
+    _methods.invokeMethod('startUnlock', {
+      'gatewayUrl': config.gatewayUrl,
+      'anonKey': config.anonKey,
+      'publishableKey': config.publishableKey,
+      'userNumber': config.userNumber,
+    });
+    return _events.receiveBroadcastStream().map((e) => _decode(e as Map));
+  }
+
+  static UnlockState _decode(Map e) {
+    switch (e['kind'] as String) {
+      case 'scanning':
+        return const Scanning();
+      case 'readerFound':
+        return ReaderFound((e['rssi'] as num?)?.toInt() ?? 0);
+      case 'tooFar':
+        return TooFar((e['rssi'] as num?)?.toInt() ?? 0);
+      case 'writing':
+        return const Writing();
+      case 'awaitingConfirmation':
+        return const AwaitingConfirmation();
+      case 'granted':
+        return Granted(e['reason'] as String?);
+      case 'denied':
+        return Denied(e['reason'] as String? ?? 'Access denied');
+      case 'timedOut':
+        return const TimedOut();
+      default:
+        return const Failed(WaveError.network);
     }
-    return runUnlock(t, _gateway, config);
   }
 }
