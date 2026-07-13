@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wave Unlock SDK — Developer Portal</title>
+  <meta name="description" content="Embed Wave Passport BLE door unlock in your app. MCP-first SDK for traditional and AI builders." />
+  <style>
+    :root {
+      --bg: #0b0f14; --panel: #121821; --panel-2: #0e141c; --border: #1e2733;
+      --fg: #e8eef6; --muted: #9fb0c3; --accent: #35d07f; --accent-2: #46b0ff;
+      --code-bg: #0a0e13; --radius: 14px;
+    }
+    @media (prefers-color-scheme: light) {
+      :root { --bg:#f6f9fc; --panel:#fff; --panel-2:#f0f4f8; --border:#dbe3ec;
+        --fg:#0c1420; --muted:#516073; --code-bg:#0c1420; }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin:0; background:var(--bg); color:var(--fg);
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+    header.hero { padding: 84px 0 56px; text-align: center; }
+    .badge { display:inline-block; font-size:13px; letter-spacing:.04em; text-transform:uppercase;
+      color:var(--accent); border:1px solid var(--border); border-radius:999px; padding:5px 14px; margin-bottom:22px; }
+    h1 { font-size: clamp(32px, 6vw, 52px); line-height:1.1; margin:0 0 18px; letter-spacing:-.02em; }
+    h1 .g { background:linear-gradient(90deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sub { font-size: clamp(17px,2.4vw,21px); color:var(--muted); max-width:640px; margin:0 auto 30px; }
+    .cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .btn { display:inline-block; padding:12px 22px; border-radius:10px; font-weight:600; text-decoration:none; border:1px solid var(--border); color:var(--fg); background:var(--panel); transition:transform .1s ease, border-color .2s; }
+    .btn:hover { transform:translateY(-1px); border-color:var(--accent); }
+    .btn.primary { background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#04121a; border:none; }
+    section { padding: 44px 0; border-top:1px solid var(--border); }
+    h2 { font-size: 26px; margin:0 0 8px; letter-spacing:-.01em; }
+    h2 + .lead { color:var(--muted); margin:0 0 26px; }
+    h3 { font-size:17px; margin:26px 0 10px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+    .card { background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+    .card h4 { margin:0 0 6px; font-size:15px; }
+    .card p { margin:0; color:var(--muted); font-size:14px; }
+    .steps { counter-reset: s; list-style:none; padding:0; margin:0; display:grid; gap:12px; }
+    .steps li { counter-increment:s; position:relative; padding:14px 16px 14px 54px; background:var(--panel-2); border:1px solid var(--border); border-radius:12px; }
+    .steps li::before { content:counter(s); position:absolute; left:14px; top:13px; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#04121a; font-weight:700; display:grid; place-items:center; font-size:14px; }
+    pre { background:var(--code-bg); color:#e6edf3; border:1px solid var(--border); border-radius:12px; padding:16px 18px; overflow-x:auto; font: 13.5px/1.55 "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+    code { font-family:"SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+    p code, li code, td code { background:var(--panel-2); border:1px solid var(--border); border-radius:6px; padding:1px 6px; font-size:.9em; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; font-size:14.5px; }
+    th, td { text-align:left; padding:11px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+    th { color:var(--muted); font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:.03em; }
+    .ai { background:linear-gradient(180deg,var(--panel),var(--panel-2)); }
+    .pill { font-size:12px; color:var(--accent-2); border:1px solid var(--border); border-radius:999px; padding:2px 9px; }
+    footer { padding:40px 0 60px; color:var(--muted); font-size:14px; text-align:center; border-top:1px solid var(--border); }
+    a { color:var(--accent-2); }
+    .scroll { overflow-x:auto; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <span class="badge">Wave Unlock SDK</span>
+      <h1>Open a door from your app in <span class="g">five lines</span>.</h1>
+      <p class="sub">Embed Wave Passport Bluetooth door unlock into your product. Native SDKs for engineers, a drop-in button for vibe coders, and an MCP server so your AI agent does the integration for you.</p>
+      <div class="cta">
+        <a class="btn primary" href="#quickstart">Quickstart</a>
+        <a class="btn" href="/llms-full.txt">llms-full.txt</a>
+        <a class="btn" href="/openapi.yaml">OpenAPI</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="ai" id="ai">
+    <div class="wrap">
+      <h2>Built for AI builders <span class="pill">MCP-first</span></h2>
+      <p class="lead">Add the Wave MCP server to your coding agent and say "add Wave door unlock." It scaffolds, validates, diagnoses, and tests the full flow — with no hardware.</p>
+      <pre><code>{
+  "mcpServers": {
+    "wave": {
+      "command": "npx",
+      "args": ["-y", "@wave/mcp"],
+      "env": {
+        "WAVE_GATEWAY_URL": "https://&lt;ref&gt;.supabase.co/functions/v1",
+        "WAVE_ANON_KEY": "&lt;anon key&gt;",
+        "WAVE_ADMIN_KEY": "&lt;only to provision partners&gt;"
+      }
+    }
+  }
+}</code></pre>
+      <div class="grid" style="margin-top:20px">
+        <div class="card"><h4>wave_docs</h4><p>The whole SDK as agent-ingestible text.</p></div>
+        <div class="card"><h4>wave_scaffold</h4><p>Writes a working starter into your project.</p></div>
+        <div class="card"><h4>wave_doctor</h4><p>Catches missing BLE permissions before you build.</p></div>
+        <div class="card"><h4>wave_simulate_unlock</h4><p>Proves grant/deny end-to-end — no reader needed.</p></div>
+        <div class="card"><h4>wave_validate_config</h4><p>Checks your key + sites are correct.</p></div>
+        <div class="card"><h4>wave_register_app</h4><p>Provisions your partner keys.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quickstart">
+    <div class="wrap">
+      <h2>Quickstart</h2>
+      <p class="lead">Prove the whole unlock flow in your terminal, no door required.</p>
+      <ol class="steps">
+        <li><strong>Get keys.</strong> Ask your agent to run <code>wave_register_app</code>, or use the keys from your Wave dashboard. You get a <code>wave_pub_*</code> (in-app) and a <code>wave_test_*</code> (testing).</li>
+        <li><strong>Exchange for a token.</strong> <code>POST /partner-auth/token</code> with your test key returns a short-lived session token.</li>
+        <li><strong>Simulate an unlock.</strong> <code>POST /unlock-mock</code> with a scenario, then read <code>/unlock-stream</code> — the exact result a real door would return.</li>
+        <li><strong>Wire the real thing.</strong> Use <code>wave_scaffold web</code> (runs today via Web Bluetooth) or a native SDK; embed your <code>wave_pub_*</code> key.</li>
+      </ol>
+      <h3>One-call simulation (curl)</h3>
+      <pre><code>TOKEN=$(curl -s "$BASE/partner-auth/token" -H "apikey: $ANON" \
+  -H "Content-Type: application/json" -d '{"key":"'"$TEST_KEY"'"}' | jq -r .token)
+
+curl -s "$BASE/unlock-mock" -H "apikey: $ANON" -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" -d '{"card_id":"10001","scenario":"granted"}'
+
+curl -s "$BASE/unlock-stream" -H "apikey: $ANON" -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" -d '{"card_id":"10001"}'
+# -> {"status":"granted","reason":"[mock] Access Granted"}</code></pre>
+    </div>
+  </section>
+
+  <section id="flow">
+    <div class="wrap">
+      <h2>How the unlock works</h2>
+      <p class="lead">Five steps, hidden behind one SDK call.</p>
+      <ol class="steps">
+        <li><strong>Scan</strong> for the reader — name <code>SKBluTag</code> / service <code>496B2C43-…</code>.</li>
+        <li><strong>Proximity gate</strong> on signal strength (RSSI), tunable per site.</li>
+        <li><strong>Write</strong> the credential — <code>0x01</code> + member number, write-without-response.</li>
+        <li><strong>Await</strong> the cloud result (grant/deny) for up to 5s.</li>
+        <li><strong>Show</strong> "Access Granted" or a friendly denial reason.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="platforms">
+    <div class="wrap">
+      <h2>Platforms</h2>
+      <div class="grid">
+        <div class="card"><h4>iOS · Swift</h4><p>Native background BLE. Swift Package + <code>WaveUnlockButton</code>.</p></div>
+        <div class="card"><h4>Android · Kotlin</h4><p>Foreground-service BLE. AAR + Compose button.</p></div>
+        <div class="card"><h4>React Native</h4><p>One JS API bridging the native cores.</p></div>
+        <div class="card"><h4>Flutter</h4><p>Dart plugin over the native cores.</p></div>
+        <div class="card"><h4>Web</h4><p>Web Bluetooth, foreground-only. Runs today.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="api">
+    <div class="wrap">
+      <h2>Gateway API</h2>
+      <p class="lead">Base <code>https://&lt;ref&gt;.supabase.co/functions/v1</code> — every call also sends <code>apikey: &lt;anon&gt;</code>.</p>
+      <div class="scroll">
+      <table>
+        <tr><th>Endpoint</th><th>Auth</th><th>Returns</th></tr>
+        <tr><td><code>POST /partner-auth/token</code></td><td>—</td><td>session token from a pub/test key</td></tr>
+        <tr><td><code>POST /unlock-stream</code></td><td>Bearer token</td><td><code>{status, reason}</code>, tenant-scoped</td></tr>
+        <tr><td><code>POST /unlock-mock</code></td><td>Bearer <em>test</em> token</td><td>emits a synthetic event</td></tr>
+        <tr><td><code>POST /partner-auth/register</code></td><td>admin key</td><td>partner keys (once)</td></tr>
+      </table>
+      </div>
+      <p style="margin-top:18px;color:var(--muted)">Full machine-readable spec: <a href="/openapi.yaml">openapi.yaml</a> · agent context: <a href="/llms.txt">llms.txt</a> / <a href="/llms-full.txt">llms-full.txt</a></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      Wave Unlock SDK · Passport Technologies · <a href="/llms-full.txt">llms-full.txt</a> · <a href="/openapi.yaml">OpenAPI</a>
+    </div>
+  </footer>
+</body>
+</html>

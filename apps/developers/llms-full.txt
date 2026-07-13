@@ -1,0 +1,91 @@
+# Wave Unlock SDK — llms-full.txt
+
+Wave Unlock lets a third-party app open a Wave Passport door over Bluetooth LE.
+This file is the complete, flat reference for an AI builder or agent.
+
+## Mental model
+
+The unlock is a 5-step pipeline hidden behind one SDK call:
+1. Scan for the reader — BLE name prefix "SKBluTag" OR service UUID
+   496B2C43-B05E-4A9A-9592-535173B7AB51.
+2. Proximity gate — compare RSSI to the site threshold (default -40, tunable per site from the cloud).
+3. Write the credential — characteristic 995B637F-13F2-4335-96F5-5541ECFCE219,
+   write WITHOUT response, payload = one byte 0x01 followed by the member's userNumber as ASCII.
+   IMPORTANT: treat the write as immediate success; do NOT wait for a BLE notify (it deadlocks the reader).
+   Disconnect ~1.5s after writing.
+4. Await the cloud result — the door hardware reports grant/deny to the gateway; poll unlock-stream up to 5s.
+5. Present the result — "granted", or a friendly denial reason.
+
+## Keys
+
+- wave_pub_<32 hex>  Publishable. Safe to embed in an app. Exchanges for a LIVE session token.
+- wave_test_<32 hex> Test. Exchanges for a TEST session token. Only test tokens may drive the mock.
+- wave_sk_<48 hex>   Secret. Server-side only. NEVER embed in an app. Used to provision partners.
+
+Session tokens are short-lived (300s) and scoped to the partner's allowed sites.
+
+## Gateway HTTP API
+
+Base URL: https://<project-ref>.supabase.co/functions/v1
+Every request ALSO sends header:  apikey: <supabase anon key>
+
+POST /partner-auth/register            (header x-wave-admin-key: <admin key>)
+  body { name, allowed_sites: string[] }
+  -> { partner_id, publishable_key, secret_key, test_key }   (keys shown ONCE)
+
+POST /partner-auth/token
+  body { key: "wave_pub_*" | "wave_test_*" }
+  -> { token, mode: "live"|"test", expires_in: 300 }
+
+POST /unlock-stream                    (header Authorization: Bearer <session token>)
+  body { card_id, binding_id? }
+  -> { status: "granted"|"denied"|"pending", reason: string|null }
+  Scoped to the caller's allowed sites — you only ever see your own members' events.
+
+POST /unlock-mock                      (header Authorization: Bearer <TEST session token>)
+  body { card_id, scenario }
+  -> emits a synthetic unlock event. Rejected (403) for live-mode tokens.
+  Scenarios: granted, member_not_found, outside_hours, membership_expired, outstanding_balance.
+
+## Denial reasons (SICM -> friendly)
+
+Granted by provider cache -> Access Granted
+Client not found -> Member not found
+Blocked by schedule -> Outside access hours
+Maximum active signins -> Maximum active sign-ins reached
+Checkins limitation -> Daily check-in limit reached
+Blocked by restriction -> Membership restriction
+Blocked by client alert -> Account alert
+Over account balance -> Outstanding balance
+Liability release -> Liability release required
+Scheduled visit -> No booking found
+No member picture -> Photo required
+Provider not found -> System error - provider unavailable
+Inactive -> Membership inactive
+Expired -> Membership expired
+
+## Testing with no hardware
+
+Exchange a wave_test_* key for a token, POST the scenario to /unlock-mock, then read
+/unlock-stream — you get the exact grant/deny path a real door would produce. The MCP
+tool wave_simulate_unlock does all three in one call.
+
+## MCP server (@wave/mcp) — the primary integration channel
+
+Add to your agent (Claude Code / Cursor):
+  { "mcpServers": { "wave": { "command": "npx", "args": ["-y", "@wave/mcp"],
+      "env": { "WAVE_GATEWAY_URL": "...", "WAVE_ANON_KEY": "...", "WAVE_ADMIN_KEY": "..." } } } }
+
+Tools: wave_docs, wave_validate_config, wave_doctor, wave_scaffold, wave_register_app, wave_simulate_unlock.
+
+## Platform support
+
+- iOS (Swift), Android (Kotlin): full background BLE. Native packages (SPM / Maven).
+- React Native, Flutter: thin bridges over the native cores.
+- Web: Web Bluetooth, foreground-only (Chrome/Edge, secure context). Runnable today via the gateway.
+
+## Integration-time checklist (what wave_doctor checks)
+
+- iOS: Info.plist NSBluetoothAlwaysUsageDescription; UIBackgroundModes includes bluetooth-central.
+- Android: BLUETOOTH_SCAN and BLUETOOTH_CONNECT permissions in AndroidManifest.xml.
+- Config: publishable key (not secret) embedded; sites are non-empty strings.
