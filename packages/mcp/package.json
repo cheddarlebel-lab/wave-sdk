@@ -1,0 +1,23 @@
+{
+  "name": "@wave/mcp",
+  "version": "0.1.0",
+  "description": "Wave Unlock SDK — MCP server. The primary integration channel for AI builders.",
+  "type": "module",
+  "bin": { "wave-mcp": "dist/index.js" },
+  "main": "dist/index.js",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^4.1.10",
+    "@types/node": "^22.10.2"
+  }
+}

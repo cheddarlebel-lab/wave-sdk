@@ -1,0 +1,34 @@
+export function llmsText(): string {
+  return `# Wave Unlock SDK — llms.txt
+
+Wave Unlock lets your app open a Wave Passport door over Bluetooth LE.
+
+## The flow (5 steps, one call in the SDKs)
+1. Scan for the reader (name prefix "SKBluTag", service 496B2C43-B05E-4A9A-9592-535173B7AB51).
+2. Proximity gate on RSSI (default threshold -40, cloud-tunable per site).
+3. Write credential: characteristic 995B637F-13F2-4335-96F5-5541ECFCE219,
+   write WITHOUT response, payload = byte 0x01 followed by the userNumber as ASCII.
+   Treat the write as immediate success; do NOT wait for a notify (it locks up). Disconnect after 1.5s.
+4. Await the cloud result from the gateway (poll unlock-stream up to 5s).
+5. Show the result: granted, or a friendly denial reason.
+
+## Gateway API (exists today)
+Base: https://<ref>.supabase.co/functions/v1  — every call also sends header 'apikey: <supabase anon key>'.
+- POST /partner-auth/token  { key: "wave_pub_*" | "wave_test_*" } -> { token, mode, expires_in }
+- POST /unlock-stream  (Authorization: Bearer <token>)  { card_id } -> { status: granted|denied|pending, reason }
+- POST /unlock-mock    (Authorization: Bearer <TEST token>)  { card_id, scenario } -> emits a synthetic event
+- POST /partner-auth/register  (x-wave-admin-key)  { name, allowed_sites } -> keys (admin only)
+
+## Keys
+- wave_pub_*  publishable — safe in an app, exchange for a live session token.
+- wave_test_* test — exchange for a test session token; only test tokens may drive /unlock-mock.
+- wave_sk_*   secret — server-side only, NEVER embed in an app.
+
+## Testing with no hardware
+Call wave_simulate_unlock (or drive /unlock-mock + /unlock-stream with a test key) to prove
+the whole grant/deny path end-to-end before you ever stand at a real door.
+
+## MCP tools
+wave_docs, wave_validate_config, wave_doctor, wave_scaffold, wave_register_app, wave_simulate_unlock.
+`;
+}
