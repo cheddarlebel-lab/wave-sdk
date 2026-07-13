@@ -15,9 +15,8 @@ const WEB_HTML = `<!doctype html>
 const WEB_JS = `// Wave Unlock — web (Web Bluetooth + gateway). Foreground-only.
 // Fill these in from wave_register_app / your Wave dashboard:
 const WAVE = {
-  gatewayUrl: "WAVE_GATEWAY_URL",   // https://<ref>.supabase.co/functions/v1
-  anonKey:    "WAVE_ANON_KEY",
-  publishableKey: "wave_pub_xxxxxxxx",
+  gatewayUrl: "https://app.wavepassport.com/api",   // branded gateway, no key needed
+  publishableKey: "wave_pub_xxxxxxxx",              // from wave_register_app / the Wave team
   serviceUuid: "496b2c43-b05e-4a9a-9592-535173b7ab51",
   writeCharacteristic: "995b637f-13f2-4335-96f5-5541ecfce219",
   userNumber: "10001",
@@ -28,7 +27,7 @@ const log = (m) => (document.getElementById("log").textContent += m + "\\n");
 async function token() {
   const r = await fetch(WAVE.gatewayUrl + "/partner-auth/token", {
     method: "POST",
-    headers: { "Content-Type": "application/json", apikey: WAVE.anonKey },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ key: WAVE.publishableKey }),
   });
   return (await r.json()).token;
@@ -54,7 +53,7 @@ async function unlock() {
   while (Date.now() < deadline) {
     const r = await fetch(WAVE.gatewayUrl + "/unlock-stream", {
       method: "POST",
-      headers: { "Content-Type": "application/json", apikey: WAVE.anonKey, Authorization: "Bearer " + t },
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + t },
       body: JSON.stringify({ card_id: WAVE.userNumber }),
     });
     const { status, reason } = await r.json();

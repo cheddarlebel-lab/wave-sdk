@@ -1,5 +1,5 @@
 export type GatewayConfig = {
-  baseUrl: string; // https://<ref>.supabase.co/functions/v1
+  baseUrl: string; // https://app.wavepassport.com/api (branded gateway)
   anonKey: string; // Supabase anon key for routing
   adminKey?: string; // WAVE_ADMIN_KEY, only needed for register
   fetchImpl?: typeof fetch; // injectable for tests

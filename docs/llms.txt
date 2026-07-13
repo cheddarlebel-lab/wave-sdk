@@ -4,7 +4,7 @@ Wave Unlock lets your app open a Wave Passport door over Bluetooth LE.
 
 ## The flow (5 steps, one call in the SDKs)
 1. Scan for the reader (name prefix "SKBluTag", service 496B2C43-B05E-4A9A-9592-535173B7AB51).
-2. Proximity gate on RSSI (default threshold -40, cloud-tunable per site).
+2. Proximity gate on RSSI (default threshold -65, cloud-tunable per site).
 3. Write credential: characteristic 995B637F-13F2-4335-96F5-5541ECFCE219,
    write WITHOUT response, payload = byte 0x01 followed by the userNumber as ASCII.
    Treat the write as immediate success; do NOT wait for a notify (it locks up). Disconnect after 1.5s.
@@ -12,7 +12,7 @@ Wave Unlock lets your app open a Wave Passport door over Bluetooth LE.
 5. Show the result: granted, or a friendly denial reason.
 
 ## Gateway API (exists today)
-Base: https://app.wavepassport.com/api  — no API key header is required.
+Base: https://app.wavepassport.com/api  — no API key header required; the branded gateway handles it.
 - POST /partner-auth/token  { key: "wave_pub_*" | "wave_test_*" } -> { token, mode, expires_in }
 - POST /unlock-stream  (Authorization: Bearer <token>)  { card_id } -> { status: granted|denied|pending, reason }
 - POST /unlock-mock    (Authorization: Bearer <TEST token>)  { card_id, scenario } -> emits a synthetic event

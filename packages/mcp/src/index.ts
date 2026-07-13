@@ -21,7 +21,8 @@ function text(data: unknown) {
 
 function requireGateway(cfg: GatewayConfig): string | null {
   if (!cfg.baseUrl) return "WAVE_GATEWAY_URL env is not set";
-  if (!cfg.anonKey) return "WAVE_ANON_KEY env is not set";
+  // WAVE_ANON_KEY is optional: the branded gateway (app.wavepassport.com/api)
+  // injects the key server-side. Only needed if pointing directly at Supabase.
   return null;
 }
 

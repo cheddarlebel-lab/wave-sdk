@@ -16,8 +16,7 @@ Add to your MCP client config (Claude Code `~/.claude.json` / Cursor `mcp.json`)
       "command": "npx",
       "args": ["-y", "@wave/mcp"],
       "env": {
-        "WAVE_GATEWAY_URL": "https://<ref>.supabase.co/functions/v1",
-        "WAVE_ANON_KEY": "<supabase anon key>",
+        "WAVE_GATEWAY_URL": "https://app.wavepassport.com/api",
         "WAVE_ADMIN_KEY": "<only if you provision partners>"
       }
     }
