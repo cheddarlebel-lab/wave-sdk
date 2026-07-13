@@ -48,6 +48,14 @@ public final class UnlockEngine: @unchecked Sendable {
         var cloudTask: Task<Void, Never>?
         var timeoutTask: Task<Void, Never>?
 
+        // Fetch the site's cloud-tuned RSSI threshold in parallel with scan startup (best-
+        // effort; falls back to the default). Resolved lazily at first reader contact — by
+        // then BLE discovery has almost always outlasted the ~one network round-trip, so it
+        // adds no perceptible delay.
+        let tunedTask = Task<Int?, Never> { await self.gateway?.tunedThreshold() }
+        var threshold = self.threshold
+        var thresholdResolved = false
+
         let transport = self.transport
         let scanTimeoutTask = Task {
             try? await Task.sleep(nanoseconds: UInt64(self.scanTimeout * 1_000_000_000))
@@ -61,6 +69,10 @@ public final class UnlockEngine: @unchecked Sendable {
 
             case .readerFound(let rssi):
                 guard !wrote else { break }
+                if !thresholdResolved {
+                    if let tuned = await tunedTask.value { threshold = tuned }
+                    thresholdResolved = true
+                }
                 if rssi >= threshold {
                     wrote = true
                     scanTimeoutTask.cancel()
@@ -108,6 +120,7 @@ public final class UnlockEngine: @unchecked Sendable {
         }
 
         scanTimeoutTask.cancel()
+        tunedTask.cancel()
         timeoutTask?.cancel()
         cloudTask?.cancel()
         let terminal = await box.value ?? .timedOut

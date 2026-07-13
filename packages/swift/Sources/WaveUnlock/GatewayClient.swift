@@ -12,8 +12,13 @@ public struct WaveConfig: Sendable {
     public var gatewayURL: URL
     public var publishableKey: String
     public var userNumber: String
+    /// Optional. When set, the SDK reads this site's cloud-tuned RSSI threshold (set by
+    /// the operator) instead of the built-in default, so proximity matches the reader's
+    /// configured distance. Leave nil to use `WaveProtocol.defaultRSSIThreshold`.
+    public var siteNumber: String?
 
-    public init(publishableKey: String, userNumber: String, gatewayURL: URL = defaultGatewayURL) {
+    public init(publishableKey: String, userNumber: String, siteNumber: String? = nil, gatewayURL: URL = defaultGatewayURL) {
+        self.siteNumber = siteNumber
         self.gatewayURL = gatewayURL
         self.publishableKey = publishableKey
         self.userNumber = userNumber
@@ -69,6 +74,19 @@ public struct GatewayClient: Sendable {
             throw WaveError.network("malformed unlock-stream response")
         }
         return UnlockOutcome(status: status, reason: obj["reason"] as? String)
+    }
+
+    /// The site's cloud-tuned RSSI threshold, or nil if no siteNumber is configured or the
+    /// fetch fails (caller falls back to the default). Never throws — proximity tuning is
+    /// best-effort and must not block an unlock.
+    public func tunedThreshold() async -> Int? {
+        guard let site = config.siteNumber, !site.isEmpty else { return nil }
+        guard let token = try? await fetchToken() else { return nil }
+        guard let req = try? request("site-config", body: ["site_number": site], bearer: token),
+              let (data, resp) = try? await session.data(for: req),
+              (resp as? HTTPURLResponse).map({ (200...299).contains($0.statusCode) }) ?? false,
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        return obj["rssi_threshold"] as? Int
     }
 
     /// Poll unlock-stream until a non-pending result or the timeout elapses.
