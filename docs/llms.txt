@@ -12,7 +12,7 @@ Wave Unlock lets your app open a Wave Passport door over Bluetooth LE.
 5. Show the result: granted, or a friendly denial reason.
 
 ## Gateway API (exists today)
-Base: https://app.wavepassport.com/api  — every call also sends header 'apikey: <supabase anon key>'.
+Base: https://app.wavepassport.com/api  — no API key header is required.
 - POST /partner-auth/token  { key: "wave_pub_*" | "wave_test_*" } -> { token, mode, expires_in }
 - POST /unlock-stream  (Authorization: Bearer <token>)  { card_id } -> { status: granted|denied|pending, reason }
 - POST /unlock-mock    (Authorization: Bearer <TEST token>)  { card_id, scenario } -> emits a synthetic event

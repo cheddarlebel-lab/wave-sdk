@@ -9,7 +9,7 @@ import com.wave.unlock.android.AndroidBleTransport
 
 val cfg = WaveConfig(
     gatewayUrl = "https://app.wavepassport.com/api",
-    anonKey = "<supabase anon key>",
+    anonKey = "", // ignored when using the branded /api gateway
     publishableKey = "wave_pub_…",
     userNumber = "10001",
 )

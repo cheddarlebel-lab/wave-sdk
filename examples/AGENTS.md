@@ -4,8 +4,7 @@ You are integrating Wave Passport BLE door unlock into an app. Everything you ne
 
 ## Facts
 - **Docs (flat, for you):** https://app.wavepassport.com/developers/llms-full.txt
-- **Gateway base:** `https://app.wavepassport.com/api` (every call also sends header `apikey: <supabase anon key>`)
-- **Public anon key:** `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aWphbXF2Z3h2YWp2aHJkbmx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI2NTUsImV4cCI6MjA4ODMwODY1NX0.KswD9UTeooxK9J3J-uJIZCCI_uLnRcJK9z2gLY5qaxg`
+- **Gateway base:** `https://app.wavepassport.com/api` (no API key header needed — the gateway handles it)
 - **Public demo test key:** `wave_test_9097529120bb93a92d058d65007fb555` (test-mode → drives the mock only; cannot open a real door)
 
 ## The fastest path
@@ -19,6 +18,6 @@ You are integrating Wave Passport BLE door unlock into an app. Everything you ne
 - **Android** `AndroidManifest.xml`: `BLUETOOTH_SCAN`, `BLUETOOTH_CONNECT`.
 
 ## MCP server (preferred)
-Add `@wave/mcp` to your MCP config with `WAVE_GATEWAY_URL` + `WAVE_ANON_KEY`, then use
+Add `@wave/mcp` to your MCP config with `WAVE_GATEWAY_URL` (the branded `/api` gateway), then use
 `wave_docs`, `wave_scaffold`, `wave_doctor`, `wave_simulate_unlock`. The server does the
 integration and self-tests it.

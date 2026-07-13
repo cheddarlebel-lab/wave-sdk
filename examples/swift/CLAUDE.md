@@ -10,7 +10,7 @@ import WaveUnlockUI  // optional drop-in button
 // 1) Configure once (keys from wave_register_app or the Wave dashboard).
 Wave.configure(WaveConfig(
     gatewayURL: URL(string: "https://app.wavepassport.com/api")!,
-    anonKey: "<supabase anon key>",
+    anonKey: "", // ignored when using the branded /api gateway
     publishableKey: "wave_pub_…",
     userNumber: "10001"
 ))

@@ -27,7 +27,7 @@ Session tokens are short-lived (300s) and scoped to the partner's allowed sites.
 ## Gateway HTTP API
 
 Base URL: https://app.wavepassport.com/api
-Every request ALSO sends header:  apikey: <supabase anon key>
+No API key header is required — the branded gateway injects it server-side.
 
 POST /partner-auth/register            (header x-wave-admin-key: <admin key>)
   body { name, allowed_sites: string[] }

@@ -79,8 +79,7 @@
       "command": "npx",
       "args": ["-y", "@wave/mcp"],
       "env": {
-        "WAVE_GATEWAY_URL": "https://app.wavepassport.com/api",
-        "WAVE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aWphbXF2Z3h2YWp2aHJkbmx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI2NTUsImV4cCI6MjA4ODMwODY1NX0.KswD9UTeooxK9J3J-uJIZCCI_uLnRcJK9z2gLY5qaxg"
+        "WAVE_GATEWAY_URL": "https://app.wavepassport.com/api"
       }
     }
   }
@@ -109,16 +108,15 @@
       <h3>Try it live now — copy, paste, run</h3>
       <p style="margin:0 0 12px;color:var(--muted)">A public demo test key. It only drives the mock (synthetic events on an isolated demo site) — it cannot open a real door. You'll get a real <code>granted</code> back from the live gateway.</p>
       <pre><code>BASE="https://app.wavepassport.com/api"
-ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aWphbXF2Z3h2YWp2aHJkbmx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI2NTUsImV4cCI6MjA4ODMwODY1NX0.KswD9UTeooxK9J3J-uJIZCCI_uLnRcJK9z2gLY5qaxg"
 TEST_KEY="wave_test_9097529120bb93a92d058d65007fb555"
 
-TOKEN=$(curl -s "$BASE/partner-auth/token" -H "apikey: $ANON" \
+TOKEN=$(curl -s "$BASE/partner-auth/token" \
   -H "Content-Type: application/json" -d "{\"key\":\"$TEST_KEY\"}" | jq -r .token)
 
-curl -s "$BASE/unlock-mock" -H "apikey: $ANON" -H "Authorization: Bearer $TOKEN" \
+curl -s "$BASE/unlock-mock" -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" -d '{"card_id":"10001","scenario":"granted"}'
 
-curl -s "$BASE/unlock-stream" -H "apikey: $ANON" -H "Authorization: Bearer $TOKEN" \
+curl -s "$BASE/unlock-stream" -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" -d '{"card_id":"10001"}'
 # -> {"status":"granted","reason":"[mock] Access Granted"}
 
@@ -157,7 +155,7 @@ curl -s "$BASE/unlock-stream" -H "apikey: $ANON" -H "Authorization: Bearer $TOKE
   <section id="api">
     <div class="wrap">
       <h2>Gateway API</h2>
-      <p class="lead">Base <code>https://app.wavepassport.com/api</code> — every call also sends the <code>apikey</code> (Supabase anon) header.</p>
+      <p class="lead">Base <code>https://app.wavepassport.com/api</code> — no API key header required; the gateway handles it.</p>
       <div class="scroll">
       <table>
         <tr><th>Endpoint</th><th>Auth</th><th>Returns</th></tr>
