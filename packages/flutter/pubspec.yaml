@@ -1,0 +1,15 @@
+name: wave_unlock
+description: Wave Passport BLE door unlock for Flutter. MCP-first SDK, contract-driven.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
