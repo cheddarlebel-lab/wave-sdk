@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 # End-to-end proof of the Wave Unlock gateway: register -> token -> mock -> stream,
-# plus a tenant-isolation negative test.
+# plus a tenant-isolation negative test. Runs against the branded, keyless gateway.
 #
 # Required env:
-#   BASE  = https://<ref>.supabase.co/functions/v1
-#   ANON  = supabase anon key (Supabase gateway still wants an apikey header)
 #   ADMIN = WAVE_ADMIN_KEY (from the function secrets; needed only for /register)
+# Optional:
+#   BASE  = gateway base (defaults to the production FQDN)
 set -euo pipefail
-: "${BASE:?set BASE=https://<ref>.supabase.co/functions/v1}"
-: "${ANON:?set ANON=<supabase anon key>}"
+BASE="${BASE:-https://app.wavepassport.com/api}"
 : "${ADMIN:?set ADMIN=<WAVE_ADMIN_KEY>}"
 
-H=(-H "Content-Type: application/json" -H "apikey: $ANON")
+H=(-H "Content-Type: application/json")
 
 jval() { grep -o "\"$1\":\"[^\"]*\"" | head -1 | cut -d'"' -f4; }
 
