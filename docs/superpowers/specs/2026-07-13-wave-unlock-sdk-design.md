@@ -109,22 +109,37 @@ cannot be meaningfully shared. So we share the *contract*, not the transport.
   gateway event, the SDK must emit this state sequence"). Every platform runs them in CI.
   This is what keeps 5 implementations honest without merging them.
 
-### 3.2 Cloud gateway
+### 3.2 Cloud gateway — Supabase Edge Functions
 
-A **Cloudflare Workers** gateway (matches the existing zproxy pattern) sits in front of
-the Supabase relay:
+The gateway extends the **existing Supabase Edge Functions** (project
+`zuijamqvgxvajvhrdnlx`, current `unlock-event` function) rather than standing up new
+infrastructure. New/extended functions form the partner-facing API surface:
 
-- **Partner auth** — Wave-issued API keys. `wave_pub_*` (publishable, safe in-app,
-  scoped to a partner + its sites) and `wave_sk_*` (secret, server-side, for provisioning).
-- **Multi-tenancy** — every request scoped to the partner and their site set; partners
-  never see each other's events or Wave's raw Supabase.
-- **Token minting** — publishable key → short-lived unlock-session token; the SDK uses
-  that to read the unlock-result event stream. No long-lived secret in the app.
-- **Rate limiting + abuse controls** at the edge.
-- **Mock mode** — `wave_simulate_unlock` scenarios hit a gateway mock endpoint that emits
-  synthetic grant/deny events for a test key, so integration is testable with no hardware.
-- The existing BBB `bridge_v3.py` → Supabase `unlock_events` path is unchanged; the
-  gateway reads from it and re-projects per-tenant.
+- **`unlock-event`** (existing) — unchanged ingest path from the BBB `bridge_v3.py` →
+  `unlock_events`. Reused as-is.
+- **`partner-auth`** (new) — validates Wave-issued API keys and mints short-lived
+  unlock-session tokens. `wave_pub_*` (publishable, safe in-app, scoped to a partner +
+  its sites) and `wave_sk_*` (secret, server-side, for provisioning via `wave_register_app`).
+- **`unlock-stream`** (new) — the SDK's per-tenant read endpoint; takes a session token,
+  returns the unlock-result event for the caller's credential/site only. Wraps the
+  Realtime subscription + HTTP-poll fallback the app uses today, scoped by tenant so
+  partners never see each other's events.
+- **`unlock-mock`** (new) — `wave_simulate_unlock` scenarios hit this endpoint; it emits
+  synthetic grant/deny events (mapped to the denial table) for a **test key only**, so
+  integration is testable with no hardware. Guarded to reject `wave_pub_*`/live keys.
+
+Supporting schema (same Supabase project):
+
+- **`partners`** table — partner record, hashed API keys, allowed site set. RLS: service-
+  write, no anon read.
+- **Multi-tenancy** — every partner-facing function scopes by partner + site set; the
+  existing anon-read policy on `unlock_events` is tightened so raw table access is no
+  longer the partner path (they go through `unlock-stream`).
+- **Rate limiting** — per-key limits enforced in `partner-auth` / `unlock-stream`
+  (token bucket in a small `rate_limits` table or Supabase's built-in limits).
+
+The BBB → `unlock_events` path is untouched; the new functions read from it and
+re-project per tenant.
 
 ## 4. MCP server — the primary channel
 
@@ -196,7 +211,8 @@ wave-sdk/
     flutter/       wave_unlock
     web/           @wave/unlock-web (foreground-only)
     mcp/           @wave/mcp  ← primary channel
-  gateway/         Cloudflare Worker (API keys, tenancy, token mint, mock)
+  gateway/         Supabase Edge Functions + migrations
+                     (partner-auth, unlock-stream, unlock-mock; partners table)
   docs/            llms.txt, llms-full.txt, examples/<platform>/ (+ CLAUDE.md each)
   codegen/         generators: contract → per-language clients/types
 ```
@@ -205,7 +221,9 @@ wave-sdk/
 
 1. **Contract first** — `wave-protocol.json`, `openapi.yaml`, conformance vectors.
    Everything else generates from or is validated against this.
-2. **Gateway** — Cloudflare Worker: key issuance, tenancy, token mint, mock endpoint.
+2. **Gateway** — Supabase Edge Functions extending `unlock-event`: `partner-auth`
+   (key issuance + token mint), `unlock-stream` (per-tenant read), `unlock-mock`;
+   `partners` table + tightened RLS.
 3. **Swift core** — extract from the existing Wave Passport app; make conformance green.
 4. **Kotlin core** — port; conformance green.
 5. **MCP server** — the primary channel; wraps scaffold/doctor/simulate against 1–4.
