@@ -9,9 +9,17 @@
     "disconnectDelayMs": 1500
   },
   "proximity": {
-    "defaultRssiThreshold": -40,
+    "defaultRssiThreshold": -65,
+    "rssiSettleWindowMs": 400,
     "cloudTimeoutMs": 5000
   },
-  "sicmStatusCodes": { "idle": "1", "processing": "3", "timeout": "6" },
+  "sicmStatusCodes": {
+    "idle": "1",
+    "processing": "3",
+    "granted": "4",
+    "denied": "5",
+    "timeout": "6",
+    "delivered": "8"
+  },
   "denialMappingRef": "conformance/denial-mapping.json"
 }

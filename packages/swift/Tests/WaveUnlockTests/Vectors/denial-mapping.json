@@ -1,0 +1,16 @@
+[
+  { "sicm": "Granted by provider cache", "friendly": "Access Granted", "result": "granted" },
+  { "sicm": "Client not found", "friendly": "Member not found", "result": "denied" },
+  { "sicm": "Blocked by schedule", "friendly": "Outside access hours", "result": "denied" },
+  { "sicm": "Maximum active signins", "friendly": "Maximum active sign-ins reached", "result": "denied" },
+  { "sicm": "Checkins limitation", "friendly": "Daily check-in limit reached", "result": "denied" },
+  { "sicm": "Blocked by restriction", "friendly": "Membership restriction", "result": "denied" },
+  { "sicm": "Blocked by client alert", "friendly": "Account alert", "result": "denied" },
+  { "sicm": "Over account balance", "friendly": "Outstanding balance", "result": "denied" },
+  { "sicm": "Liability release", "friendly": "Liability release required", "result": "denied" },
+  { "sicm": "Scheduled visit", "friendly": "No booking found", "result": "denied" },
+  { "sicm": "No member picture", "friendly": "Photo required", "result": "denied" },
+  { "sicm": "Provider not found", "friendly": "System error - provider unavailable", "result": "denied" },
+  { "sicm": "Inactive", "friendly": "Membership inactive", "result": "denied" },
+  { "sicm": "Expired", "friendly": "Membership expired", "result": "denied" }
+]

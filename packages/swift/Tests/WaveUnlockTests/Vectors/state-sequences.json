@@ -1,0 +1,5 @@
+[
+  { "event": { "result": "granted" }, "states": ["scanning", "readerFound", "writing", "awaitingConfirmation", "granted"] },
+  { "event": { "result": "denied", "reason": "Member not found" }, "states": ["scanning", "readerFound", "writing", "awaitingConfirmation", "denied"] },
+  { "event": null, "states": ["scanning", "readerFound", "writing", "awaitingConfirmation", "timedOut"] }
+]
