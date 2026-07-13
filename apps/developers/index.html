@@ -79,9 +79,8 @@
       "command": "npx",
       "args": ["-y", "@wave/mcp"],
       "env": {
-        "WAVE_GATEWAY_URL": "https://&lt;ref&gt;.supabase.co/functions/v1",
-        "WAVE_ANON_KEY": "&lt;anon key&gt;",
-        "WAVE_ADMIN_KEY": "&lt;only to provision partners&gt;"
+        "WAVE_GATEWAY_URL": "https://zuijamqvgxvajvhrdnlx.supabase.co/functions/v1",
+        "WAVE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aWphbXF2Z3h2YWp2aHJkbmx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI2NTUsImV4cCI6MjA4ODMwODY1NX0.KswD9UTeooxK9J3J-uJIZCCI_uLnRcJK9z2gLY5qaxg"
       }
     }
   }
@@ -107,16 +106,24 @@
         <li><strong>Simulate an unlock.</strong> <code>POST /unlock-mock</code> with a scenario, then read <code>/unlock-stream</code> — the exact result a real door would return.</li>
         <li><strong>Wire the real thing.</strong> Use <code>wave_scaffold web</code> (runs today via Web Bluetooth) or a native SDK; embed your <code>wave_pub_*</code> key.</li>
       </ol>
-      <h3>One-call simulation (curl)</h3>
-      <pre><code>TOKEN=$(curl -s "$BASE/partner-auth/token" -H "apikey: $ANON" \
-  -H "Content-Type: application/json" -d '{"key":"'"$TEST_KEY"'"}' | jq -r .token)
+      <h3>Try it live now — copy, paste, run</h3>
+      <p style="margin:0 0 12px;color:var(--muted)">A public demo test key. It only drives the mock (synthetic events on an isolated demo site) — it cannot open a real door. You'll get a real <code>granted</code> back from the live gateway.</p>
+      <pre><code>BASE="https://zuijamqvgxvajvhrdnlx.supabase.co/functions/v1"
+ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aWphbXF2Z3h2YWp2aHJkbmx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MzI2NTUsImV4cCI6MjA4ODMwODY1NX0.KswD9UTeooxK9J3J-uJIZCCI_uLnRcJK9z2gLY5qaxg"
+TEST_KEY="wave_test_9097529120bb93a92d058d65007fb555"
+
+TOKEN=$(curl -s "$BASE/partner-auth/token" -H "apikey: $ANON" \
+  -H "Content-Type: application/json" -d "{\"key\":\"$TEST_KEY\"}" | jq -r .token)
 
 curl -s "$BASE/unlock-mock" -H "apikey: $ANON" -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" -d '{"card_id":"10001","scenario":"granted"}'
 
 curl -s "$BASE/unlock-stream" -H "apikey: $ANON" -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" -d '{"card_id":"10001"}'
-# -> {"status":"granted","reason":"[mock] Access Granted"}</code></pre>
+# -> {"status":"granted","reason":"[mock] Access Granted"}
+
+# try a denial: swap scenario for member_not_found | outside_hours |
+#                membership_expired | outstanding_balance</code></pre>
     </div>
   </section>
 
@@ -150,7 +157,7 @@ curl -s "$BASE/unlock-stream" -H "apikey: $ANON" -H "Authorization: Bearer $TOKE
   <section id="api">
     <div class="wrap">
       <h2>Gateway API</h2>
-      <p class="lead">Base <code>https://&lt;ref&gt;.supabase.co/functions/v1</code> — every call also sends <code>apikey: &lt;anon&gt;</code>.</p>
+      <p class="lead">Base <code>https://zuijamqvgxvajvhrdnlx.supabase.co/functions/v1</code> — every call also sends the <code>apikey</code> (Supabase anon) header.</p>
       <div class="scroll">
       <table>
         <tr><th>Endpoint</th><th>Auth</th><th>Returns</th></tr>
