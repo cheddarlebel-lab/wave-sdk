@@ -2,14 +2,38 @@
 
 Wave Unlock lets your app open a Wave Passport door over Bluetooth LE.
 
-## The flow (5 steps, one call in the SDKs)
+## READ FIRST — the access model (this governs everything)
+The SDK SENDS the credential; it does NOT decide access. A Wave credential resolves to a
+`cardID`, and the door controller grants ONLY if that cardID exists in the site's PROVIDER
+SOURCE (the club's live membership system, e.g. MindBody/ABC/Glofox) or its synced PROVIDER
+CACHE, AND passes the membership rules (schedule, dues, check-in limits). Your app cannot mint
+access for someone who is not a member of the site. "Has the app" != "gets in."
+
+Two identities:
+- Provider member id — what the user TYPES at enrollment (their MindBody client id / barcode).
+  Used once, to find the person in the provider roster.
+- cardID — the canonical door identity the controller validates on every unlock. The device
+  resolves the typed member id -> cardID at enrollment and binds the credential to it.
+
+Two ways to make your users door-eligible:
+1. They are already members of the site's provider (default) — they enroll with the member id
+   they already have; nothing to provision.
+2. Passport is the provider for the site — an operator/site setup step arranged with Passport:
+   you provision users into a Passport-hosted roster, the controller syncs them, then credentials
+   resolve normally. The SDK does NOT do this at runtime.
+Enrollment for a non-member fails with `not_found` and issues no credential. Confirm which
+provider a site uses, and that your users exist in it, BEFORE shipping.
+
+## The flow (6 steps; the SDK owns steps 1-3 and rendering step 6)
 1. Scan for the reader (name prefix "SKBluTag", service 496B2C43-B05E-4A9A-9592-535173B7AB51).
 2. Proximity gate on RSSI (default threshold -65, cloud-tunable per site).
 3. Write credential: characteristic 995B637F-13F2-4335-96F5-5541ECFCE219,
    write WITHOUT response, payload = byte 0x01 followed by the userNumber as ASCII.
    Treat the write as immediate success; do NOT wait for a notify (it locks up). Disconnect after 1.5s.
-4. Await the cloud result from the gateway (poll unlock-stream up to 5s).
-5. Show the result: granted, or a friendly denial reason.
+4. Resolve (on-door acceptor): verifies the one-time token, hands the member's real cardID to the controller (SICM).
+5. Decide (controller): validates the cardID against the site's provider source/cache + membership rules -> grant/deny.
+   Steps 4-5 are OUTSIDE your app — this is why a valid token can still be denied.
+6. Await the cloud result (poll unlock-stream up to 5s) and show it: granted, or a friendly denial reason.
 
 ## Gateway API (exists today)
 Base: https://app.wavepassport.com/api  — no API key header required; the branded gateway handles it.

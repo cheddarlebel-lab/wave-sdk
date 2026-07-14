@@ -3,9 +3,40 @@
 Wave Unlock lets a third-party app open a Wave Passport door over Bluetooth LE.
 This file is the complete, flat reference for an AI builder or agent.
 
+## Access & identity model (READ FIRST — this governs whether a door ever opens)
+
+The SDK SENDS a credential; it does NOT make the access decision. The door controller does.
+
+- A Wave credential resolves to a `cardID` (the canonical door identity).
+- The controller (SICM) grants ONLY if that cardID exists in the site's PROVIDER SOURCE
+  (the club's live membership system — MindBody, ABC Financial, Glofox, TwinOaks, etc.) or its
+  synced PROVIDER CACHE (a local offline copy of the roster on the door hardware), AND the
+  membership passes its rules (active schedule, dues/balance, check-in limits, restrictions).
+- Therefore your app CANNOT grant access to a user who is not a member of that site.
+  "Has your app installed" != "can open the door."
+
+Two distinct identities you handle:
+- Provider member id: what the user TYPES at enrollment (their id in the site's membership
+  system — MindBody client id, barcode, etc.). Used ONCE, to locate the person in the roster.
+- cardID: the door-truth key the controller validates on EVERY unlock. The on-door software
+  resolves the typed member id -> cardID at enrollment and binds the Wave credential to it.
+Enrolling a person who is not in the roster fails with `not_found` and issues NO credential.
+
+Two ways to make your users door-eligible:
+1. They are already members of the site's provider (DEFAULT). They enroll with the member id
+   they already have; the device resolves it to their cardID; nothing to provision.
+2. Passport is the provider for the site. When there is no third-party membership system, the
+   site can run a Passport-hosted roster (managed in the Passport dashboard). You provision your
+   users into that roster first (an operator/site setup step arranged with Passport, NOT a
+   runtime SDK call); the controller syncs them; then credentials resolve normally.
+
+Building for a site you do not operate? Confirm with the operator/Passport which provider the
+door uses and that your users exist in it BEFORE you ship.
+
 ## Mental model
 
-The unlock is a 5-step pipeline hidden behind one SDK call:
+The unlock is a 6-step pipeline; your app owns steps 1-3 and rendering step 6. Steps 4-5 happen
+on the door hardware and the provider — which is why a valid token can still be denied.
 1. Scan for the reader — BLE name prefix "SKBluTag" OR service UUID
    496B2C43-B05E-4A9A-9592-535173B7AB51.
 2. Proximity gate — compare RSSI to the site threshold (default -65, tunable per site from the cloud).
@@ -13,8 +44,12 @@ The unlock is a 5-step pipeline hidden behind one SDK call:
    write WITHOUT response, payload = one byte 0x01 followed by the member's userNumber as ASCII.
    IMPORTANT: treat the write as immediate success; do NOT wait for a BLE notify (it deadlocks the reader).
    Disconnect ~1.5s after writing.
-4. Await the cloud result — the door hardware reports grant/deny to the gateway; poll unlock-stream up to 5s.
-5. Present the result — "granted", or a friendly denial reason.
+4. Resolve — the on-door acceptor verifies the one-time token and hands the member's real cardID
+   to the controller (SICM).
+5. Decide — the controller validates that cardID against the site's provider source/cache and its
+   membership rules, then grants or denies.
+6. Await the cloud result (poll unlock-stream up to 5s) and present it: "granted", or a friendly
+   denial reason.
 
 ## Keys
 
@@ -74,7 +109,9 @@ tool wave_simulate_unlock does all three in one call.
 
 Add to your agent (Claude Code / Cursor):
   { "mcpServers": { "wave": { "command": "npx", "args": ["-y", "@wave/mcp"],
-      "env": { "WAVE_GATEWAY_URL": "...", "WAVE_ANON_KEY": "...", "WAVE_ADMIN_KEY": "..." } } } }
+      "env": { "WAVE_GATEWAY_URL": "https://app.wavepassport.com/api" } } } }
+  (No Supabase/anon key: the SDK only ever talks to the branded gateway, which injects its own
+   backend key server-side. Partner keys are passed to the individual tools, never as env secrets.)
 
 Tools: wave_docs, wave_validate_config, wave_doctor, wave_scaffold, wave_register_app, wave_simulate_unlock.
 

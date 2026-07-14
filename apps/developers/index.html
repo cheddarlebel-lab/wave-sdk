@@ -53,6 +53,9 @@
     footer { padding:40px 0 60px; color:var(--muted); font-size:14px; text-align:center; border-top:1px solid var(--border); }
     a { color:var(--accent-2); }
     .scroll { overflow-x:auto; }
+    .note { background:var(--panel-2); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:12px; padding:16px 18px; margin:18px 0; color:var(--muted); }
+    .note strong { color:var(--fg); }
+    .two { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:18px; }
   </style>
 </head>
 <body>
@@ -95,6 +98,39 @@
     </div>
   </section>
 
+  <section id="identity">
+    <div class="wrap">
+      <h2>Read this first — who can open a door</h2>
+      <p class="lead">The SDK sends the credential. It does <em>not</em> decide access. A door only opens for a member the site's access provider already knows.</p>
+
+      <div class="note">
+        <strong>The one rule that governs everything:</strong> a Wave credential resolves to a <code>cardID</code>, and the door's controller grants only if that <code>cardID</code> exists in the site's <strong>provider source</strong> (the club's live membership system) or its synced <strong>provider cache</strong> — and passes the membership's rules (schedule, dues, check-in limits). Your app cannot mint access for a user who isn't a member of the site. "Has the app" ≠ "gets in."
+      </div>
+
+      <h3>The two identities you'll deal with</h3>
+      <div class="two">
+        <div class="card">
+          <h4>Provider member id <span class="pill">what your user types</span></h4>
+          <p>The id a member has in the site's membership system (MindBody client id, barcode, etc.). Used once, at enrollment, to find the person.</p>
+        </div>
+        <div class="card">
+          <h4><code>cardID</code> <span class="pill">the door truth</span></h4>
+          <p>The canonical door identity the controller validates. The device resolves the typed member id → <code>cardID</code> at enrollment and binds your credential to it. Every unlock is checked against this.</p>
+        </div>
+      </div>
+
+      <h3>Two ways to make your users door-eligible</h3>
+      <ol class="steps">
+        <li><strong>They're already members of the site.</strong> Default case. The site runs its own provider (MindBody, ABC, Glofox, TwinOaks…); your user enrolls with the member id they already have, the device resolves it to their <code>cardID</code>, and you're done. Nothing to provision.</li>
+        <li><strong>Passport is the provider for the site.</strong> When there's no third-party membership system, the site can run a Passport-hosted roster (managed in the Passport dashboard). You provision your users into that roster first; the controller syncs them and their credentials then resolve normally. <em>This is an operator/site setup step, arranged with Passport — not something the SDK does at runtime.</em></li>
+      </ol>
+
+      <div class="note">
+        <strong>Building against a site you don't operate?</strong> Confirm with the site operator (or Passport) which provider the door uses and that your users exist in it <em>before</em> you ship. Enrollment for a non-member fails with <code>not_found</code> and no credential is issued — the SDK surfaces that, but it can't fix it.
+      </div>
+    </div>
+  </section>
+
   <section id="quickstart">
     <div class="wrap">
       <h2>Quickstart</h2>
@@ -128,14 +164,16 @@ curl -s "$BASE/unlock-stream" -H "Authorization: Bearer $TOKEN" \
   <section id="flow">
     <div class="wrap">
       <h2>How the unlock works</h2>
-      <p class="lead">Five steps, hidden behind one SDK call.</p>
+      <p class="lead">Six steps, hidden behind one SDK call. The SDK owns the phone-side; the controller and provider own the decision.</p>
       <ol class="steps">
         <li><strong>Scan</strong> for the reader — name <code>SKBluTag</code> / service <code>496B2C43-…</code>.</li>
         <li><strong>Proximity gate</strong> on signal strength (RSSI), tunable per site.</li>
-        <li><strong>Write</strong> the credential — <code>0x01</code> + member number, write-without-response.</li>
-        <li><strong>Await</strong> the cloud result (grant/deny) for up to 5s.</li>
-        <li><strong>Show</strong> "Access Granted" or a friendly denial reason.</li>
+        <li><strong>Write</strong> the credential — a one-time token bound to the member's <code>cardID</code>, write-without-response.</li>
+        <li><strong>Resolve</strong> — the on-door acceptor verifies the token and hands the member's real <code>cardID</code> to the controller (SICM).</li>
+        <li><strong>Decide</strong> — the controller validates that <code>cardID</code> against the site's provider source/cache and its membership rules, then grants or denies.</li>
+        <li><strong>Await &amp; show</strong> the result over the cloud (up to 5s): "Access Granted" or a friendly denial reason.</li>
       </ol>
+      <p style="margin-top:16px;color:var(--muted)">Steps 4–5 are outside your app — they're why a valid token can still be denied (expired membership, outside hours, unknown member). Your app's job is steps 1–3 and rendering step 6.</p>
     </div>
   </section>
 
