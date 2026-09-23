@@ -1,5 +1,9 @@
 [
   { "sicm": "Granted by provider cache", "friendly": "Access Granted", "result": "granted" },
+  { "sicm": "Granted by provider source", "friendly": "Access Granted", "result": "granted" },
+  { "sicm": "ClientNotFound", "friendly": "Member not found", "result": "denied" },
+  { "sicm": "does not have valid membership for that location", "friendly": "No active membership for this location", "result": "denied" },
+  { "sicm": "No valid contract found", "friendly": "No active membership", "result": "denied" },
   { "sicm": "Client not found", "friendly": "Member not found", "result": "denied" },
   { "sicm": "Blocked by schedule", "friendly": "Outside access hours", "result": "denied" },
   { "sicm": "Maximum active signins", "friendly": "Maximum active sign-ins reached", "result": "denied" },

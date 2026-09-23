@@ -4,6 +4,10 @@ package com.wave.unlock
 object DenialMapping {
     val table: List<Pair<String, String>> = listOf(
         "Granted by provider cache" to "Access Granted",
+        "Granted by provider source" to "Access Granted",
+        "ClientNotFound" to "Member not found",
+        "does not have valid membership for that location" to "No active membership for this location",
+        "No valid contract found" to "No active membership",
         "Client not found" to "Member not found",
         "Blocked by schedule" to "Outside access hours",
         "Maximum active signins" to "Maximum active sign-ins reached",

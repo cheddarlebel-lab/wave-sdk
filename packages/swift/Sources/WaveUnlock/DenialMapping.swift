@@ -6,6 +6,10 @@ import Foundation
 public enum DenialMapping {
     public static let table: [(sicm: String, friendly: String)] = [
         ("Granted by provider cache", "Access Granted"),
+        ("Granted by provider source", "Access Granted"),
+        ("ClientNotFound", "Member not found"),
+        ("does not have valid membership for that location", "No active membership for this location"),
+        ("No valid contract found", "No active membership"),
         ("Client not found", "Member not found"),
         ("Blocked by schedule", "Outside access hours"),
         ("Maximum active signins", "Maximum active sign-ins reached"),
