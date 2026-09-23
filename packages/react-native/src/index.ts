@@ -4,6 +4,7 @@ import type { EmitterLike, UnlockState, WaveNativeModule, WaveRNConfig } from ".
 export type { UnlockState, WaveRNConfig } from "./types.js";
 export { isTerminal } from "./types.js";
 export { stateStream } from "./stream.js";
+export { friendly } from "./denials.js";
 
 /// Loads the RN native module + event emitter lazily so this package is importable
 /// (and testable) outside a React Native runtime.

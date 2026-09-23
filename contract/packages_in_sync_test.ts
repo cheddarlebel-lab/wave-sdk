@@ -15,6 +15,7 @@ const PKGS: Record<string, string> = {
   kotlin: "../packages/kotlin/src/main/kotlin/com/wave/unlock/DenialMapping.kt",
   flutter: "../packages/flutter/lib/src/denials.dart",
   swift: "../packages/swift/Sources/WaveUnlock/DenialMapping.swift",
+  "react-native": "../packages/react-native/src/denials.ts",
 };
 
 Deno.test("every package carries the contract denial table, in order", async () => {
@@ -22,7 +23,13 @@ Deno.test("every package carries the contract denial table, in order", async () 
     await Deno.readTextFile(new URL("./conformance/denial-mapping.json", import.meta.url)),
   );
   for (const [name, rel] of Object.entries(PKGS)) {
-    const src = await Deno.readTextFile(new URL(rel, import.meta.url));
+    const raw = await Deno.readTextFile(new URL(rel, import.meta.url));
+    // Strip comments before matching. Every one of these files explains the table ABOVE it,
+    // and that prose quotes contract keys — so a naive indexOf finds the comment, not the
+    // row, and the order check then fails on a perfectly correct table. (It did.)
+    const src = raw
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .split("\n").filter((l) => !l.trim().startsWith("//")).join("\n");
     const positions: number[] = [];
     for (const r of rows) {
       const at = src.indexOf(r.sicm);
